@@ -21,10 +21,11 @@ class Solution {
             nodes[edge[0]].children.add(nodes[edge[1]]);
         }
 
+
         return dfs(nodes[0], 0, 0, new ArrayList<>(List.of(nodes[0])), info);
     }
 
-    private int dfs(Node currentNode, int sheep, int wolf, List<Node> nextNodes, int[] info) {
+    public int dfs(Node currentNode, int sheep, int wolf, List<Node> nextNodes, int[] info) {
         // 현재 노드에서 양 또는 늑대 수를 갱신
         if (info[currentNode.id] == 0) {
             sheep++;
@@ -32,16 +33,24 @@ class Solution {
             wolf++;
         }
 
-        // 늑대 수가 양의 수 이상이면 종료
         if (wolf >= sheep) {
             return 0;
         }
 
-        // 최대 양의 수 기록
+        //노드 0 다음 노드 1, 2
+        // 0 방문 양 = 1 늑대 = 0
+        // 1 방문 양 = 2 늑대 = 0 다음 노드 2, 4
+        // 4 방문 양 = 3 늑대 = 0 다음 노드 2 (4 자식 x)
+        // 2 방문 양 = 1 늑대 = 1 늑대 < 양 (굿) 다음 노드 3
+        // 3 방문 양 = 1 늑대 = 2 늑대 >= 양 (x) 반환 0
+        //0 -> 1 -> 4
+
+
         int maxSheep = sheep;
 
         // 가능한 다음 노드 갱신
         List<Node> newNextNodes = new ArrayList<>(nextNodes);
+        //현재 노드는 탐색 제외
         newNextNodes.remove(currentNode);
         newNextNodes.addAll(currentNode.children);
 
