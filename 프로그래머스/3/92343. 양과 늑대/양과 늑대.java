@@ -24,7 +24,7 @@ class Solution {
             nodes[parent].children.add(nodes[child]);
         }
         //일단 탐색 후보들
-        List<Node> canNextNodes = new ArrayList<>(List.of(nodes[0]));
+        List<Node> canNextNodes = new ArrayList<>();
        return dfs(0,0, nodes[0],canNextNodes, info);
     }
 
@@ -58,7 +58,11 @@ class Solution {
         return maxSheep;
     }
 
-    public int max(int first, int second) {
-        return (first > second) ? first : second;
+   public int max(int first, int second) {
+        if(first > second )
+            return first;
+        else
+            return second;
     }
+
 }
