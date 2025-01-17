@@ -1,72 +1,64 @@
 import java.util.*;
-
 class Node {
-    int id;
+    int index;
     List<Node> children;
 
-    public Node(int id) {
-        this.id = id;
-        this.children = new ArrayList<>();
+    public Node(int index, List<Node> children) {
+        this.index = index; // 노드 인덱스 초기화
+        this.children = children; // 자식 노드 리스트 초기화
     }
 }
 
+
 class Solution {
     public int solution(int[] info, int[][] edges) {
-        // 트리 노드 생성
+        int answer = 0;
         Node[] nodes = new Node[info.length];
-        for (int i = 0; i < info.length; i++) {
-            nodes[i] = new Node(i);
+        for(int i = 0; i<nodes.length; i++){
+            nodes[i] = new Node(i, new ArrayList<>());
         }
+        //부모가 자식 누구 델꼬 있나
         for (int[] edge : edges) {
-            nodes[edge[0]].children.add(nodes[edge[1]]);
+            int parent = edge[0];
+            int child = edge[1];
+            nodes[parent].children.add(nodes[child]);
         }
-
-
-        return dfs(nodes[0], 0, 0, new ArrayList<>(List.of(nodes[0])), info);
+        //일단 탐색 후보들
+        List<Node> canNextNodes = new ArrayList<>(List.of(nodes[0]));
+       return dfs(0,0, nodes[0],canNextNodes, info);
     }
 
-    public int dfs(Node currentNode, int sheep, int wolf, List<Node> nextNodes, int[] info) {
-        // 현재 노드에서 양 또는 늑대 수를 갱신
-        if (info[currentNode.id] == 0) {
+    public int dfs(int wolf, int sheep, Node currentIndex, List<Node> canNextNodes, int[] info) {
+        if (info[currentIndex.index] == 0) {
             sheep++;
-        } else {
+        }
+        else {
             wolf++;
         }
-
-        if (wolf >= sheep) {
+        //종료 조건
+        if(wolf >= sheep)
             return 0;
-        }
-
-        //노드 0 다음 노드 1, 2
-        // 0 방문 양 = 1 늑대 = 0
-        // 1 방문 양 = 2 늑대 = 0 다음 노드 2, 4
-        // 4 방문 양 = 3 늑대 = 0 다음 노드 2 (4 자식 x)
-        // 2 방문 양 = 1 늑대 = 1 늑대 < 양 (굿) 다음 노드 3
-        // 3 방문 양 = 1 늑대 = 2 늑대 >= 양 (x) 반환 0
-        //0 -> 1 -> 4
-
 
         int maxSheep = sheep;
 
-        // 가능한 다음 노드 갱신
-        List<Node> newNextNodes = new ArrayList<>(nextNodes);
-        //현재 노드는 탐색 제외
-        newNextNodes.remove(currentNode);
-        newNextNodes.addAll(currentNode.children);
+        //백트래킹
+        List<Node> newIndex = new ArrayList<>(canNextNodes);
+        //현재 노드 지워야함
+        newIndex.remove(currentIndex);
+        //자식
+        newIndex.addAll(currentIndex.children);
 
-        // 모든 다음 노드에 대해 DFS 탐색
-        for (Node nextNode : newNextNodes) {
-            maxSheep = max(maxSheep, dfs(nextNode, sheep, wolf, newNextNodes, info));
+
+        //탐색 가능한 노드들 비교
+        for (Node nextNode : newIndex) {
+            // 복사된 리스트로 재귀 호출
+            List<Node> nextNodesForCall = new ArrayList<>(newIndex);
+            maxSheep = max(maxSheep, dfs(wolf, sheep, nextNode, nextNodesForCall, info));
         }
-
         return maxSheep;
     }
 
-    private int max(int a, int b) {
-        if (a > b) {
-            return a;
-        } else {
-            return b;
-        }
+    public int max(int first, int second) {
+        return (first > second) ? first : second;
     }
 }
