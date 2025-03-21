@@ -12,9 +12,10 @@ public class Main {
         int num = n1*n2*n3;
         String str = String.valueOf(num);
         int[] arr = new int[10];
-        for (int i = 0; i < str.length(); i++) {
-            int digit = str.charAt(i) - '0';
+        while (num > 0) {
+            int digit = num % 10; 
             arr[digit]++;
+            num /= 10; 
         }
 
         for(int i = 0; i<10; i++) {
